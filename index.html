@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>YOLOv8 Caries Detection</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        h1 {
+            color: #4CAF50; /* Green */
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #777;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+        .btn {
+            border: 2px solid #4CAF50; /* Green */
+            color: white;
+            background-color: #4CAF50; /* Green */
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .btn:hover {
+            background-color: #45a049; /* Darker Green */
+        }
+        .upload-btn-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+        }
+        canvas {
+            display: block;
+            border: 1px solid #ddd;
+            margin: 0 auto 30px;
+            max-width: 90%;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .class-ids {
+            padding: 10px;
+            background-color: #FFC107; /* Amber */
+            border-radius: 8px;
+            color: #333;
+            font-size: 16px;
+            display: inline-block;
+        }
+        .tooth-img {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+        .decoration {
+            position: absolute;
+            z-index: -1;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background-color: #4CAF50; /* Green */
+            transform: translate(-50%, -50%) rotate(45deg);
+            top: 20%;
+            left: 80%;
+        }
+    </style>
+</head>
+<body>
+    <div class="decoration"></div>
+    <div class="container">
+        <img src="https://image.freepik.com/free-vector/cute-cartoon-tooth-character_8169-301.jpg" alt="Tooth" class="tooth-img">
+        <h1>YOLOv8 Caries Detection</h1>
+        <p>Upload an image to detect caries using the YOLOv8 model.</p>
+        <div class="upload-btn-wrapper">
+            <button class="btn">Upload an Image</button>
+            <input id="uploadInput" type="file" accept="image/*"/>
+        </div>
+        <canvas width="1080" height="1080"></canvas>
+        <div class="class-ids" id="classIds"></div>
+    </div>
+    <script>
+        const input = document.getElementById("uploadInput");
+        const classIdsContainer = document.getElementById("classIds");
+
+        input.addEventListener("change", async (event) => {
+            const data = new FormData();
+            data.append("image_file", event.target.files[0], "image_file");
+            const response = await fetch("/detect", {
+                method: "POST",
+                body: data
+            });
+            const { boxes, num_caries } = await response.json();
+            draw_image_and_boxes(event.target.files[0], boxes);
+            display_class_ids(num_caries);
+        });
+
+        function draw_image_and_boxes(file, boxes) {
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
+            img.onload = () => {
+                const canvas = document.querySelector("canvas");
+                const ctx = canvas.getContext("2d");
+                ctx.clearRect(0, 0, canvas.width, canvas.height);  // Clear the canvas
+                ctx.drawImage(img, 0, 0, 1080, 1080);  // Resize image to 1080x1080 on canvas
+                ctx.strokeStyle = "#00FF00";
+                ctx.lineWidth = 3;
+                ctx.font = "18px Arial";
+                ctx.fillStyle = "#00FF00";
+                boxes.forEach(([x1, y1, x2, y2, label, prob]) => {
+                    ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+                    ctx.fillText(`${label} (${prob}%)`, x1, y1 > 10 ? y1 - 5 : y1 + 20);
+                });
+            };
+        }
+
+        function display_class_ids(num_caries) {
+            classIdsContainer.innerHTML = `<strong>Number of Caries Detected:</strong> ${num_caries}`;
+        }
+    </script>
+</body>
+</html>
