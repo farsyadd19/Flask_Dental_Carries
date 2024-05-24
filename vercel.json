@@ -5,7 +5,7 @@
             "src": "object_detector.py",
             "use": "@vercel/python",
             "config": {
-                "runtime": "python3.7",
+                "runtime": "python3.9",
                 "install": {
                     "includeFiles": {
                         "/vercel/path0/requirements.txt": "./requirements.txt"
