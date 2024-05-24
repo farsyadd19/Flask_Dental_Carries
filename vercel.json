@@ -4,7 +4,7 @@
         {
             "src":"./object_detector.py",
             "use": "@vercel/python",
-            "config": {"runtime":"python3.10"}
+            "config": {"runtime":"python3.7"}
         }
     ],
     "routes": [
