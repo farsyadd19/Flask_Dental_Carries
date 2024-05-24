@@ -18,8 +18,5 @@
       "src": "/(.*)",
       "dest": "/object_detector.py"
     }
-  ],
-  "dependencies": {
-    "pip": "pip3"
-  }
+  ]
 }
