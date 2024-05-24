@@ -18,5 +18,8 @@
       "src": "/(.*)",
       "dest": "/object_detector.py"
     }
-  ]
+  ],
+  "scripts": {
+    "postinstall": "pip3 install --disable-pip-version-check --target . --upgrade -r requirements.txt"
+  }
 }
