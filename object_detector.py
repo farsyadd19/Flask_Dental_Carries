@@ -59,6 +59,7 @@ def detect_objects_on_image(buf):
             output.append([x1, y1, x2, y2, class_name, prob])
             num_caries += 1
     return output, num_caries
+
 if __name__ == '__main__':
     app.run(debug=True)
 
