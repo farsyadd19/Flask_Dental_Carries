@@ -5,7 +5,7 @@
             "src": "object_detector.py",
             "use": "@vercel/python",
             "config": {
-                "runtime": "python3.7"
+                "runtime": "python3.9"
             }
         }
     ],
@@ -17,6 +17,13 @@
         {
             "src": "/(.*)",
             "dest": "/object_detector.py"
+        },
+        {
+            "src": "/static/(.*)",
+            "dest": "/static/$1"
+        },
+        {
+            "handle": "error"
         }
     ]
 }
