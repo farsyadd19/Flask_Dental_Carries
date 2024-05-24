@@ -2,15 +2,21 @@
     "version": 2,
     "builds": [
         {
-            "src":"./object_detector.py",
+            "src": "object_detector.py",
             "use": "@vercel/python",
-            "config": {"runtime":"python3.7"}
+            "config": {
+                "runtime": "python3.7"
+            }
         }
     ],
     "routes": [
         {
-            "src":"/(.*)",
-            "dest":"/"
+            "src": "/detect",
+            "dest": "/object_detector.py"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/object_detector.py"
         }
     ]
 }
